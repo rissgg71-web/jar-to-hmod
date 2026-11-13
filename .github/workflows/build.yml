@@ -1,0 +1,35 @@
+
+name: JAR to HMOD Builder
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Inspect JAR
+        run: |
+          mkdir -p output
+          unzip -l "MouseTweaks-fabric-mc26.3-2.31 (1).jar" > output/jar-contents.txt
+          unzip -o "MouseTweaks-fabric-mc26.3-2.31 (1).jar" -d output/extracted
+
+      - name: Package inspection
+        run: |
+          cd output/extracted
+          zip -r ../MouseTweaks-inspected.zip .
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: MouseTweaks-inspection
+          path: output/
